@@ -1,1 +1,5 @@
-# University_programming
+ University_programming
+
+All taks to Dr. Szwabiński
+
+
