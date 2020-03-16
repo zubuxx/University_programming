@@ -121,6 +121,16 @@ class Statistics():
         self.occurring = self.occurring[self.occurring['Date'].apply(lambda x: x.year == year)]
         return self.occurring
     def hist_plot(self, year = datetime.now().year):
+        '''
+        Generates histogram of changes in selceted year.
+
+
+
+        :param year: int
+        ---------------------
+        From which year we want to visualize data.
+        :return:
+        '''
         if self.df is None:
             self.get_statistics()
         mod_dates = self.df['creationTime'].append(self.df['lastModificationTime'])
