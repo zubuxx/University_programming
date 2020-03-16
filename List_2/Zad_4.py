@@ -20,7 +20,7 @@ class Statistics():
         '''
         self.path = file_path
         self.df = None
-        self.occurring = pd.DataFrame
+        self.occurring = None
 
     def get_statistics(self):
         """
@@ -34,6 +34,8 @@ class Statistics():
         ---------------------
         returns Statistics as DataFrame object
         """
+        if self.df is not None:
+            return self.df
         name = []
         formats = []
         creation_time = []
@@ -84,16 +86,15 @@ class Statistics():
             name = '/' + name
         self.df.to_csv(os.path.dirname(self.path) + name + '.csv')
 
-
-    def daily_plot(self, year = datetime.now().year):
+    def changesThatDay(self, year = datetime.now().year):
         '''
-        Generates plot of changes in the directory passed as file_path in selected year.
-        (current year by default)
+        Generates Pandas DataFrame object with statistics of changes each day.
         :param year: int
         ---------------------
-        From which year we want to visualize data.
-
-        :return:
+        From which year we want to get statistics.
+        :return: Pandas DataFrame
+        ---------------------
+        Retruns object with all needed statistics to generate plot.
         '''
 
         if self.df is None:
@@ -113,13 +114,40 @@ class Statistics():
                 modif.append(self.df[self.df['lastModificationTime'] == date].iat[0, 6])
             else:
                 modif.append(0)
-            # creat.append(self.df[self.df['creationTime']==date].iat[0,2])
-            # modif.append(self.df[self.df['lastModificationTime']==date].iat[0,3])
         occrs = {'Date': dates, 'Creations_that_day': creat, 'Modifications_that_day': modif}
         self.occurring = pd.DataFrame(occrs)
         self.occurring.sort_values(by=['Date'], inplace=True)
         self.occurring['Total_changes'] = self.occurring['Creations_that_day'] + self.occurring['Modifications_that_day']
         self.occurring = self.occurring[self.occurring['Date'].apply(lambda x: x.year == year)]
+        return self.occurring
+    def hist_plot(self, year = datetime.now().year):
+        if self.df is None:
+            self.get_statistics()
+        mod_dates = self.df['creationTime'].append(self.df['lastModificationTime'])
+        mod_dates = mod_dates[mod_dates.apply(lambda x: x.year == year)]
+        mod_dates = mod_dates.apply(lambda x: x.month)
+        plt.hist(mod_dates)
+        months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        plt.xticks(range(1,13), months)
+        plt.title('Monthly histogram')
+        plt.xlabel('Month')
+        plt.ylabel('Amount of changes')
+        plt.show()
+
+
+
+    def daily_plot(self, year = datetime.now().year):
+        '''
+        Generates plot of changes in the directory passed as file_path in selected year.
+        (current year by default)
+        :param year: int
+        ---------------------
+        From which year we want to visualize data.
+
+        :return:
+        '''
+        if self.occurring is None:
+            self.changesThatDay(year)
         plt.plot(self.occurring['Date'], self.occurring['Creations_that_day'], label='Number of crated files')
         plt.plot(self.occurring['Date'], self.occurring['Modifications_that_day'], label = 'Number of modifications')
         plt.plot(self.occurring['Date'], self.occurring['Total_changes'], label = 'Number of all changes')
@@ -127,6 +155,9 @@ class Statistics():
         ticksx = self.occurring['Date'].apply(lambda x: x.strftime('%d.%m'))
         plt.xticks(self.occurring['Date'], ticksx)
         plt.ylim(0, max(self.occurring['Total_changes'].max(), self.occurring['Creations_that_day'].max(), self.occurring['Modifications_that_day'].max()))
+        plt.xlabel('Date')
+        plt.ylabel('Changes made that day')
+        plt.title('Daily plot of changes')
         plt.legend()
         plt.show()
 
