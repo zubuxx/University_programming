@@ -2,7 +2,7 @@ import os
 import argparse
 from datetime import datetime, timedelta
 
-windows = False
+windows = True
 
 parser = argparse.ArgumentParser(description='Archive any number of text files into one.')
 
