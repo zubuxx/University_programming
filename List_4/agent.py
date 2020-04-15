@@ -65,6 +65,7 @@ fig, ax = plt.subplots()
 ax.set_xlim(-x.board_size,x.board_size)
 ax.set_ylim(-x.board_size,x.board_size)
 l, = ax.plot(0,0)
+ax.grid()
 
 def init():
     l.set_data(0,0)
