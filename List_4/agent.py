@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from matplotlib import animation
+import os
 import time
 import numpy as np
 
@@ -58,34 +59,38 @@ class Agent():
         self.data = np.concatenate((track, self.z))
         return self.data
 
-x = Agent(size=15, steps=300)
-data = x.generate_data()
-
-fig, ax = plt.subplots()
-ax.set_xlim(-x.board_size,x.board_size)
-ax.set_ylim(-x.board_size,x.board_size)
-l, = ax.plot(0,0)
-ax.grid()
 
 def init():
-    l.set_data(0,0)
+    ax.scatter(0,0)
 def update(i):
-    l.set_data(data[:i,0], data[:i,1])
-#aby zmienić czas między nowymi liniami należy zmienić parametr "interval" w ms.
+    ax.cla()
+    ax.set_xlim(-x.board_size, x.board_size)
+    ax.set_ylim(-x.board_size, x.board_size)
+    ax.grid()
+    ax.scatter(data[i,0], data[i,1])
+    plt.savefig(f"png{i}.png")
 
-anim = animation.FuncAnimation(fig, update, init_func=init, frames=len(data),interval=300,  blit=False)
+if __name__ == "__main__":
+    x = Agent(size=15, steps=100)
+    data = x.generate_data()
+    try:
+        os.mkdir("folder_png")
+        os.chdir("folder_png")
+    except:
+        os.chdir("folder_png")
+    fig, ax = plt.subplots()
+    ax.set_xlim(-x.board_size,x.board_size)
+    ax.set_ylim(-x.board_size,x.board_size)
+    ax.grid()
+    #aby zmienić szybość animacji należy zmienić parmetr interval
+    anim = animation.FuncAnimation(fig, update, init_func=init, frames=len(data), interval=300,  blit=False)
+    gif_path = os.path.join(os.path.dirname(os.getcwd()), "animation_test1.gif")
+    anim.save(gif_path, fps=20, writer="avconv", codec="libx264")
+    plt.show()
 
-anim.save('animation_test.gif', fps=20, writer="avconv", codec="libx264")
 
 # Aby uzyskać format mp4 należy odkomentować linię poniżej
 # anim.save('animation_test.mp4', fps=20, writer="avconv", codec="libx264")
 # anim.to_html5_video()
-plt.show()
 
 
-
-#     # animate = lambda i: l.set_data(t[:i], x[:i])
-# for i in range(len(data)):
-#     animate(i)
-#     time.sleep(0.05)
-#     plt.show()
