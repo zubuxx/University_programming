@@ -82,8 +82,8 @@ if __name__ == "__main__":
     ax.set_xlim(-x.board_size,x.board_size)
     ax.set_ylim(-x.board_size,x.board_size)
     ax.grid()
-    #aby zmienić szybość animacji należy zmienić parmetr interval
-    anim = animation.FuncAnimation(fig, update, init_func=init, frames=len(data), interval=300,  blit=False)
+    #aby zmienić szybość animacji należy zmienić parmetr interval (przejście z jednej klatki do drugiej w ms)
+    anim = animation.FuncAnimation(fig, update, init_func=init, frames=len(data), interval=600,  blit=False)
     gif_path = os.path.join(os.path.dirname(os.getcwd()), "animation_test1.gif")
     anim.save(gif_path, fps=20, writer="avconv", codec="libx264")
     plt.show()
