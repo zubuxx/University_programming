@@ -1,11 +1,9 @@
 from tkinter import *
 import tkinter.ttk as ttk
-import math
-import os, threading
-import time
+import os
 import pandas as pd
 from datetime import datetime, timedelta
-import tkinter.messagebox as msb
+import threading
 
 class Currency:
     def __init__(self):
@@ -43,8 +41,14 @@ class Currency:
 
             except:
                 self.connection()
-
         return data
+
+
+
+
+
+
+
 
     def connection(self, lost=True):
         self.up_var.set("Data has been updated!")
@@ -56,17 +60,15 @@ class Currency:
         elif lost is None:
             self.up_var.set("")
         elif not lost:
-            con_sc.place(relx=1.0, x=0, y=25, anchor=NE)
+            con_sc.place(relx=1.0 ,x=0, y=25, anchor=NE)
             con_lbl.place_forget()
-            self.conn = True
+            self.conn=True
+
 
 
     def on_select_changed(self, event):
         if len(self.inp_value.get()) > 0 :
             self.update_result()
-
-
-
 
 
 
@@ -88,7 +90,6 @@ class Currency:
         cb1 = ttk.Combobox(self.root, textvariable = self.cb_value1)
         cb1.place(relx=0.35, rely=0.55, x=0, y=0, anchor=SE)
         cb1['values'] = values
-        cb1.bind("<<ComboboxSelected>>", self.on_select_changed)
 
         cb1.current(0)
 
@@ -102,7 +103,6 @@ class Currency:
         values[0], values[1] = values[1], values[0]
         values = tuple(values)
         cb2['values'] = values
-        cb2.bind("<<ComboboxSelected>>", self.on_select_changed)
 
         cb2.current(0)
 
@@ -112,7 +112,10 @@ class Currency:
         self.inp_value = StringVar()
         inp = Entry(self.root, textvariable = self.inp_value, width=15)
         inp.place(relx=0.95, rely=0.55, x=0, y=0, anchor=SE)
-        self.inp_value.trace_add("write", self.update_result)
+
+        #Count button
+        ct_bt = Button(self.root, text="Count", width=16, command=self.update_result)
+        ct_bt.place(relx=0.95, rely=0.55, x=0, y=40, anchor=SE)
 
 
         #Output
@@ -124,10 +127,12 @@ class Currency:
         ex_bt = Button(self.root, text="Exit", command=quit, width=6)
         ex_bt.place(relx=1.0, rely=0.85, x=-90, y=0, anchor=W)
 
-        # Hide_updated
-        self.root.after(3000, self.connection, None)
 
-        # Run program
+
+        #Hide_updated
+        self.root.after(5000, self.connection, None)
+
+        #Run program
         self.root.mainloop()
 
 
@@ -170,5 +175,3 @@ class Currency:
 if __name__ == '__main__':
     Currency()
 
-    # root = Tk()
-    # root.mainloop()
