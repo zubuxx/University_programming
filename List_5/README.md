@@ -1,0 +1,1 @@
+currency.py zawiera dynamiczne przeliczanie waluty, natomiast currrency_2.py zawiera przeliczanie waluty dopiero po kliknięciu w przycisk.
